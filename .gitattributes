@@ -1,0 +1,4 @@
+# Script eseguiti dentro il container Linux: sempre LF anche su Windows
+*.sh text eol=lf
+rel/*.eex text eol=lf
+rel/*.bat.eex text eol=crlf

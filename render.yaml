@@ -1,0 +1,40 @@
+# Blueprint Render: app Claper (Docker) + Postgres, piano free, regione Francoforte.
+# I valori con `sync: false` vanno inseriti a mano nella dashboard al primo deploy.
+services:
+  - type: web
+    name: claper
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: claper-db
+          property: connectionString
+      - key: SECRET_KEY_BASE
+        sync: false
+      - key: BASE_URL
+        sync: false
+      - key: SECURE_COOKIE
+        value: "true"
+      - key: POOL_SIZE
+        value: "5"
+      - key: PRESENTATION_STORAGE
+        value: local
+      - key: PRESENTATION_STORAGE_DIR
+        value: /app/uploads
+      - key: MAIL_TRANSPORT
+        value: local
+      - key: EMAIL_CONFIRMATION
+        value: "false"
+      - key: LANGUAGES
+        value: it,en,fr,es,nl,de
+
+databases:
+  - name: claper-db
+    plan: free
+    region: frankfurt
+    databaseName: claper
+    user: claper

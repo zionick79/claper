@@ -40,7 +40,7 @@ var locale =
   navigator.language.split("-")[0];
 
 if (!supportedLocales.includes(locale)) {
-  locale = "en";
+  locale = "it";
 }
 
 moment.locale("en");

@@ -21,7 +21,7 @@ services:
     networks:
       - claper-net
   app:
-    image: ghcr.io/claperco/claper:latest # or build: .
+    build: . # immagine costruita dal codice locale (traduzioni italiane incluse)
     ports:
       - 4000:4000
     volumes:
