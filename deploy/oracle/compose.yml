@@ -1,0 +1,53 @@
+# Produzione su VM Oracle: Postgres + Claper + Caddy (HTTPS automatico).
+# Uso (dalla root del repo sulla VM):
+#   docker compose -f deploy/oracle/compose.yml --env-file deploy/oracle/.env up -d --build
+services:
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    volumes:
+      - claper-db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: claper
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?imposta POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: claper
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "claper", "-U", "claper"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+
+  app:
+    build: ../..
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://claper:${POSTGRES_PASSWORD}@db:5432/claper
+      BASE_URL: https://${DOMAIN}
+      SECURE_COOKIE: "true"
+    volumes:
+      - claper-uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - app
+
+volumes:
+  claper-db:
+  claper-uploads:
+  caddy-data:
+  caddy-config:
