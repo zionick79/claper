@@ -1,5 +1,6 @@
 # Blueprint Render: app Claper (Docker) + Postgres, piano free, regione Francoforte.
 # I valori con `sync: false` vanno inseriti a mano nella dashboard al primo deploy.
+# BASE_URL deve coincidere con l'indirizzo del servizio, altrimenti LiveView rifiuta il WebSocket (403).
 services:
   - type: web
     name: claper
@@ -16,7 +17,7 @@ services:
       - key: SECRET_KEY_BASE
         sync: false
       - key: BASE_URL
-        sync: false
+        value: https://claper-3gbz.onrender.com
       - key: SECURE_COOKIE
         value: "true"
       - key: POOL_SIZE
